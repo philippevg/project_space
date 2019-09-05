@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ShipController : MonoBehaviour
 {
+    [SerializeField] float thrustPower = 100f;
+    [SerializeField] float rotationSpeed = 100f;
+
     Rigidbody rigidBody;
     AudioSource audioSource;
 
@@ -17,36 +20,47 @@ public class ShipController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ProcessInput();
+        Thrust();
+        Rotate();
     }
 
-    private void ProcessInput()
+    private void Thrust()
     {
-        if(Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
         {
-            rigidBody.AddRelativeForce(Vector3.up);
+            rigidBody.AddRelativeForce(Vector3.up * thrustPower);
         }
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             audioSource.Play();
         }
 
-        if(Input.GetKeyUp(KeyCode.Space)) {
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
             audioSource.Stop();
         }
+    }
 
-        if(Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.LeftArrow))
+private void Rotate()
+    {
+        rigidBody.freezeRotation = true;
+
+        var rotationVector = rotationSpeed * Time.deltaTime * Vector3.forward;
+
+        if (Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.LeftArrow))
         {
 
         }
-        else if(Input.GetKey(KeyCode.RightArrow))
+        else if (Input.GetKey(KeyCode.RightArrow))
         {
-            transform.Rotate(Vector3.back);
+            transform.Rotate(-rotationVector);
         }
-        else if(Input.GetKey(KeyCode.LeftArrow))
+        else if (Input.GetKey(KeyCode.LeftArrow))
         {
-            transform.Rotate(Vector3.forward);
+            transform.Rotate(rotationVector);
         }
+
+        rigidBody.freezeRotation = false;
     }
 }
